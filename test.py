@@ -9,6 +9,7 @@ ff.init_chain(natoms,1.0,1.0,(1.414/1.122),0.1)
 
 r = np.zeros(natoms*3)
 
+r[3] = 0.2
 r[5] = 1.0
 r[7] = 1.1
 r[8] = 1.0
@@ -32,6 +33,11 @@ vv.set_momenta(np.zeros(natoms*3))
 vv.set_timestep(0.001)
 vv.set_maxtime(10.0)
 
-vv.propagate(ff)
+data = blarf.dataset(natoms*3)
 
+vv.propagate(ff,data)
+
+print data.get_numpoints()
+print data.get_positions()
+print data.get_energies_exact()
 
