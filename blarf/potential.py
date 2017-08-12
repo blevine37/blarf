@@ -8,8 +8,8 @@ class potential():
         self.energy = 0.0
         self.forces = np.zeros(self.get_numdims())
 
-    def eval_forcefield(self,r):
-        exec("self.eval_forcefield_" + self.forcefield + "(r)")
+    def eval_pes(self,r):
+        exec("self.eval_pes_" + self.forcefield + "(r)")
 
     def set_forcefield(self,ff):
         self.forcefield = ff
@@ -79,7 +79,7 @@ class potential():
         self.set_chain_lj_sigma(sigma)
         self.set_chain_lj_eps(eps)
 
-    def eval_forcefield_chain(self,r):
+    def eval_pes_chain(self,r):
         e = 0.0
         f = np.zeros(self.get_numdims())
 
