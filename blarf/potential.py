@@ -135,7 +135,6 @@ class potential():
                 tmp12 = tmp6 * tmp6
 
                 e += 4.0 * self.get_chain_lj_eps() * (tmp12 - tmp6)
-                print iatom, jatom, 4.0 * self.get_chain_lj_eps() * (tmp12 - tmp6)
                 
                 ftmp = 4.0 * self.get_chain_lj_eps()
                 ftmp *= 6.0 * tmp6 * one_d_r - 12.0 * tmp12 * one_d_r
