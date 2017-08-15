@@ -72,6 +72,22 @@ class cluster():
                 rmin = r
         return rmin        
 
+    def compute_second_shortest_distance(self,pos,nummeans=-1):
+        if nummeans < 0:
+            nummeans = self.get_k()
+        rmin = 1.0e20
+        r2min = 1.0e19
+        for imean in range(nummeans):
+            mean = self.get_mean_element(imean)
+            r = self.compute_distance(mean,pos)
+            if r < rmin:
+                r2min = rmin
+                rmin = r
+            else:
+                if r < r2min:
+                    r2min = r
+        return r2min        
+
     def k_means_plus_plus(self,data):
         # randomly select first mean
         nummeans = self.get_num_fixed_means()

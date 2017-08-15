@@ -1,9 +1,9 @@
 import numpy as np
 import blarf
 
-natoms = 7
+natoms = 3
 
-k = 50
+k = 5
 
 ff = blarf.potential()
 
@@ -15,17 +15,18 @@ r[3] = 0.2
 r[5] = 1.0
 r[7] = 1.1
 r[8] = 1.0
-r[10] = 1.1
-r[11] = 1.9
-r[13] = 0.9
-r[14] = 3.0
+#3
+#r[10] = 1.1
+#r[11] = 1.9
+#r[13] = 0.9
+#r[14] = 3.0
 # 5
-r[15] = 0.3
-r[16] = 0.9
-r[17] = 4.0
+#r[15] = 0.3
+#r[16] = 0.9
+#r[17] = 4.0
 # 6
-r[19] = 1.1
-r[20] = 4.8
+#r[19] = 1.1
+#r[20] = 4.8
 
 print "r ", r
 
@@ -40,13 +41,13 @@ vv.set_numdims(natoms*3)
 vv.set_positions(r)
 vv.set_momenta(np.zeros(natoms*3))
 vv.set_timestep(0.001)
-vv.set_maxtime(100.0)
+vv.set_maxtime(10.0)
 vv.set_num_rescale_steps(100)
 vv.set_temperature(0.1)
 
 data = blarf.dataset(natoms*3)
 
-vv.propagate(ff,data,stride=100)
+vv.propagate(ff,data,stride=1000)
 
 print data.get_numpoints()
 print data.get_positions()
@@ -57,11 +58,12 @@ thindata.set_internal_type("reciprical_bond")
 thindata.compute_internals()
 
 print thindata.get_numpoints()
+print "thin pos"
 print thindata.get_positions()
 print thindata.get_energies_exact()
 print thindata.get_numinternals()
 print thindata.get_internals()
-print thindata.get_internal_element(100)
+#print thindata.get_internal_element(100)
 
 clust = blarf.cluster(k,thindata.get_numinternals())
 
@@ -71,3 +73,11 @@ print clust.get_mean_element(1)
 print clust.get_mean_element(2)
 print clust.get_mean_element(3)
 print clust.get_mean_element(4)
+
+network = blarf.rbfn()
+
+network.init_from_cluster_reciprical_bonds_traditionalrbf(clust)
+
+#cent = network.get_centers()[2]
+
+network.solve_weights(thindata)

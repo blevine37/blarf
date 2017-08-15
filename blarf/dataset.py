@@ -29,7 +29,6 @@ class dataset():
         self.numpoints = n
         self.allocate_arrays()
 
-    
     def get_numpoints(self):
         return self.numpoints
 
