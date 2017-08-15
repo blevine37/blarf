@@ -10,6 +10,7 @@ class rbfn():
         self.numdims = 0
         self.centers = []
         self.numbf = 0
+        self.width_factor = 2.0
 
     def init_from_cluster(self,clust):
         self.numcenters = clust.get_k()
@@ -63,26 +64,19 @@ class rbfn():
         print "npoints ", npoints
         ncent = self.get_numcenters()
         nbf = self.get_numbf()
-        self.G = np.zeros((npoints,nbf))
+        self.G = np.ones((npoints,nbf+1))
 
         alpha = self.get_alpha()
         r = data.get_internals()
         rprime = np.zeros_like(r)
-        ibf = 0
+        ibf = 1
         for icent in range(ncent):
             rcent = self.get_centers()[icent].get_positions()
             for ipoint in range(npoints):
-                print "ipoint ", ipoint
-                print r[ipoint,:]
-                print rcent
                 rprime[ipoint,:] = r[ipoint,:] - rcent
                 rprime2 = rprime * rprime
             prods = np.matmul(rprime2,alpha.T)
-            print "prods"
-            print prods
             Gcol = np.exp(np.sum(prods,axis = 1))
-            print "Gcol"
-            print Gcol
             nbfcent = self.get_centers()[icent].get_numbf()
             for jbf in range(nbfcent):
                 self.G[:,ibf] = Gcol
@@ -100,6 +94,19 @@ class rbfn():
         self.weights = np.matmul(self.Ginv,e_exact)
         print "weights"
         print self.weights
+
+        data.set_energies_approx(np.matmul(self.G,self.weights))
+        residual = data.compute_residual()
+        print "residual"
+        print residual
+        meanresidual = np.sum(residual) / data.get_numpoints()
+        meanunsignedresidual = np.sum(np.absolute(residual)) / data.get_numpoints()
+        print "meanresidual, meanunsignedresidual ",meanresidual, meanunsignedresidual
+        
+
+
+
+    
         
         
 
@@ -129,6 +136,34 @@ class rbfn():
             width = -1.0 * width * width
 
             cent.init_rbfn_center_reciprical_bonds_traditionalrbf(width)
+            
+            self.add_center(cent)
+            print "ncenters ", self.get_numcenters()
+            print "positions ", cent.get_positions()
+            print "bf_icoords ", cent.get_bf_icoords()
+            print "bf_widths ", cent.get_bf_widths()
+
+        self.compute_numbf()
+        print "numbf ", self.get_numbf()
+
+    def init_from_cluster_reciprical_bonds_onedimensional(self,clust):
+        ndims = clust.get_numdims()
+        self.numdims = ndims
+
+        for icenter in range(clust.get_k()):
+            cent = rbfn_center(ndims)
+            
+            pos = clust.get_mean_element(icenter)
+
+            cent.set_positions(pos)
+            
+            rmin = clust.compute_second_shortest_distance(pos)
+            # width is in reciprical length^2 and is negative to avoid
+            # the need for subsequent negation
+            width = math.sqrt(float(ndims)) / (rmin * self.get_width_factor())
+            width = -1.0 * width * width
+
+            cent.init_rbfn_center_reciprical_bonds_onedimensional(width)
             
             self.add_center(cent)
             print "ncenters ", self.get_numcenters()

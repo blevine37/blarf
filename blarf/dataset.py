@@ -88,6 +88,9 @@ class dataset():
         self.numinternals = eval("self.compute_numinternals_" + self.get_internal_type() + "()")
         self.allocate_arrays()
 
+    def compute_residual(self):
+        return (self.energies_approx - self.energies_exact)
+
     def get_numinternals(self):
         return self.numinternals
 

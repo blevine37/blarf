@@ -58,3 +58,11 @@ class rbfn_center():
         w = width*np.ones(self.get_numdims())
         self.add_bf(ic,w)
         
+    def init_rbfn_center_reciprical_bonds_onedimensional(self,width):
+        for idim in range(self.get_numdims()):
+            ic = np.zeros(self.get_numdims(),dtype=np.int8)
+            ic[idim] = 1
+            w = np.zeros(self.get_numdims())
+            w[idim] = width
+            self.add_bf(ic,w)
+        
