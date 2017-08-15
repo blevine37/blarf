@@ -3,6 +3,7 @@ import math
 from blarf.dataset import dataset
 from blarf.cluster import cluster
 from blarf.rbfn_center import rbfn_center
+import h5py
 
 class rbfn():
     def __init__(self):
@@ -105,6 +106,22 @@ class rbfn():
         
 
 
+    def h5_output(self,filename):
+        h5f = h5py.File(filename, "w")
+        members = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
+        for key in members:
+            print eval("type(self." + key + ").__name__")
+            if eval("type(self." + key + ").__name__") == "list":
+                print eval("self." + key + "[0].__class__.__name__")
+                if eval("self." + key + "[0].__class__.__name__") == "rbfn_center":
+                    for key2 in eval("range(len(self." + key + "))"):
+                        centgrp = h5f.create_group(key + "__" + str(key2))
+                        eval("self." + key + "[" + str(key2) + "].h5_output(centgrp)")
+            else:
+                dset = h5f.create_dataset(key, data=eval("self." + key))
+                        
+                    
+            #dset = h5f.create_dataset(key, data=eval("self." + key))
 
     
         

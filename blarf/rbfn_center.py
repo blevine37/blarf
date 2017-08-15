@@ -47,6 +47,11 @@ class rbfn_center():
     def get_bf_widths(self):
         return self.bf_widths.copy()
 
+    def h5_output(self,centgrp):
+        members = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
+        for key in members:
+            dset = centgrp.create_dataset(key, data=eval("self." + key))
+
 #################################
 # code for internal types
 #################################

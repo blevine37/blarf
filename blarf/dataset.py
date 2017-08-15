@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import h5py
 
 class dataset():
     def __init__(self,nd):
@@ -93,6 +94,12 @@ class dataset():
 
     def get_numinternals(self):
         return self.numinternals
+
+    def h5_output(self,filename):
+        h5f = h5py.File(filename, "w")
+        members = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
+        for key in members:
+            dset = h5f.create_dataset(key, data=eval("self." + key))
 
 #############################################
 # code for internal types
