@@ -85,12 +85,20 @@ class dataset():
     def get_internal_type(self):
         return self.internal_type
 
+    def get_mean_residual(self):
+        return self.mean_residual
+
+    def get_mean_unsigned_residual(self):
+        return self.mean_unsigned_residual
+
     def compute_numinternals(self):
         self.numinternals = eval("self.compute_numinternals_" + self.get_internal_type() + "()")
         self.allocate_arrays()
 
     def compute_residual(self):
-        return (self.energies_approx - self.energies_exact)
+        self.residual = (self.energies_approx - self.energies_exact)
+        self.mean_residual = (np.sum(self.residual) / self.get_numpoints())
+        self.mean_unsigned_residual = (np.sum(np.absolute(self.residual)) / self.get_numpoints())
 
     def get_numinternals(self):
         return self.numinternals

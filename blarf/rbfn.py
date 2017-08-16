@@ -97,15 +97,8 @@ class rbfn():
         print self.weights
 
         data.set_energies_approx(np.matmul(self.G,self.weights))
-        residual = data.compute_residual()
-        print "residual"
-        print residual
-        meanresidual = np.sum(residual) / data.get_numpoints()
-        meanunsignedresidual = np.sum(np.absolute(residual)) / data.get_numpoints()
-        print "meanresidual, meanunsignedresidual ",meanresidual, meanunsignedresidual
+        data.compute_residual()
         
-
-
     def h5_output(self,filename):
         h5f = h5py.File(filename, "w")
         members = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
@@ -149,7 +142,7 @@ class rbfn():
             rmin = clust.compute_second_shortest_distance(pos)
             # width is in reciprical length^2 and is negative to avoid
             # the need for subsequent negation
-            width = (0.5 / rmin)
+            width = math.sqrt(float(ndims)) / (rmin * self.get_width_factor())
             width = -1.0 * width * width
 
             cent.init_rbfn_center_reciprical_bonds_traditionalrbf(width)
