@@ -3,7 +3,7 @@ import blarf
 
 natoms = 3
 
-k = 100
+k = 200
 
 ff = blarf.potential()
 
@@ -47,7 +47,7 @@ vv.set_temperature(0.1)
 
 data = blarf.dataset(natoms*3)
 
-vv.propagate(ff,data,stride=10)
+vv.propagate(ff,data,stride=100)
 
 print data.get_numpoints()
 print data.get_positions()
@@ -76,10 +76,13 @@ print clust.get_mean_element(4)
 
 network = blarf.rbfn()
 
-network.set_width_factor(16.0)
+network.set_width_factor(2.0)
 network.init_from_cluster_reciprical_bonds_traditionalrbf(clust)
 #network.init_from_cluster_reciprical_bonds_onedimensional(clust)
 
 #cent = network.get_centers()[2]
 
 network.solve_weights(thindata)
+
+print "mur"
+print thindata.get_mean_unsigned_residual()

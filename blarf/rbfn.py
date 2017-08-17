@@ -58,7 +58,21 @@ class rbfn():
             self.alpha[ibf:(ibf+nbfcent),:] = self.get_centers()[icent].get_bf_widths()
             ibf += nbfcent
         print self.alpha
-        
+
+    def build_rprime(self,pos_point):
+        nbf = self.get_numbf()
+        ncent = self.get_numcenters()
+        rprime = np.zeros((nbf,self.get_numdims()))
+        ibf = 0
+        for icent in range(ncent):
+            nbfcent = self.get_centers()[icent].get_numbf()
+            pos_cent = self.get_centers()[icent].get_positions()
+            pos_diff = pos_point - pos_cent
+            for jbf in range(nbfcent):
+                rprime[ibf,:] = pos_diff
+                ibf += 1
+        return rprime
+                
     def build_G(self,data):
         ndims = self.get_numdims()
         npoints = data.get_numpoints()
@@ -71,28 +85,37 @@ class rbfn():
         r = data.get_internals()
         rprime = np.zeros_like(r)
         ibf = 1
-        for icent in range(ncent):
-            rcent = self.get_centers()[icent].get_positions()
-            for ipoint in range(npoints):
-                rprime[ipoint,:] = r[ipoint,:] - rcent
-                rprime2 = rprime * rprime
-            prods = np.matmul(rprime2,alpha.T)
-            Gcol = np.exp(np.sum(prods,axis = 1))
-            nbfcent = self.get_centers()[icent].get_numbf()
-            for jbf in range(nbfcent):
-                self.G[:,ibf] = Gcol
-                ibf += 1
+        for ipoint in range(npoints):
+            rprime = self.build_rprime(r[ipoint,:])
+            prods = rprime * rprime * alpha
+            Grow = np.exp(np.sum(prods,axis=1))
+            self.G[ipoint,1:nbf+1] = Grow
+            ibf += 1
+            
+#        for icent in range(ncent):
+#            rcent = self.get_centers()[icent].get_positions()
+#            for ipoint in range(npoints):
+#                rprime[ipoint,:] = r[ipoint,:] - rcent
+#                rprime2 = rprime * rprime
+#            prods = np.matmul(rprime2,alpha.T)
+#            Gcol = np.exp(np.sum(prods,axis = 1))
+#            nbfcent = self.get_centers()[icent].get_numbf()
+#            for jbf in range(nbfcent):
+#                self.G[:,ibf] = Gcol
+#                ibf += 1
         print "G"
         print self.G
 
     def solve_weights(self,data):
         self.build_alpha()
         self.build_G(data)
-        self.Ginv = np.linalg.pinv(self.G)
-        print "Ginv"
-        print self.Ginv
+        #self.Ginv = np.linalg.pinv(self.G)
+        #print "Ginv"
+        #print self.Ginv
         e_exact = data.get_energies_exact()
-        self.weights = np.matmul(self.Ginv,e_exact)
+        #self.weights = np.matmul(self.Ginv,e_exact)
+        self.weights = (np.linalg.lstsq(self.G,e_exact))[0]
+        
         print "weights"
         print self.weights
 
