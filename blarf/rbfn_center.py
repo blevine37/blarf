@@ -8,7 +8,7 @@ class rbfn_center():
         self.numdims = nd
         self.positions = np.zeros(nd)
         self.numbf = 0
-        self.bf_icoords = np.zeros((0,nd),dtype=np.int8)
+        self.bf_icoords = np.zeros((0,nd),dtype=np.intc)
         self.bf_widths = np.zeros((0,nd))
 
     def get_numdims(self):
@@ -59,13 +59,13 @@ class rbfn_center():
 # reciprical_bonds
 
     def init_rbfn_center_reciprical_bonds_traditionalrbf(self,width):
-        ic = np.ones(self.get_numdims(),dtype=np.int8)
+        ic = np.ones(self.get_numdims(),dtype=np.intc)
         w = width*np.ones(self.get_numdims())
         self.add_bf(ic,w)
         
     def init_rbfn_center_reciprical_bonds_onedimensional(self,width):
         for idim in range(self.get_numdims()):
-            ic = np.zeros(self.get_numdims(),dtype=np.int8)
+            ic = np.zeros(self.get_numdims(),dtype=np.intc)
             ic[idim] = 1
             w = np.zeros(self.get_numdims())
             w[idim] = width

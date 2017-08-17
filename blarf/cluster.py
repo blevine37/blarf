@@ -104,7 +104,6 @@ class cluster():
             distmax = np.amax(distances)
             denom = distmax * distmax
             probabilities = (distances * distances) / denom
-            print "prob ", probabilities
             ipoint = -1
             while ipoint == -1:
                 jpoint = random.randrange(numpoints)
@@ -118,6 +117,7 @@ class cluster():
         k = self.get_k()
         nfixed = self.get_num_fixed_means()
         ndims = self.get_numdims()
+        npoints = data.get_numpoints()
         
         self.k_means_plus_plus(data)
 
@@ -128,6 +128,14 @@ class cluster():
             current_means = self.compute_means(data,assignment)
             zdone = True
             for imean in range(nfixed,k):
+                zemptymean = False
+                for idim in range(ndims):
+                    if current_means[imean,idim] != current_means[imean,idim]:
+                        zemptymean = True
+                if zemptymean:
+                    print "Replacing empty mean with random data point", imean
+                    ipoint = random.randrange(npoints)
+                    current_means[imean,:] = data.get_internal_element(ipoint)
                 for idim in range(ndims):
                     if abs(prev_means[imean,idim]-current_means[imean,idim]) > 1.0e-8:
                         zdone=False
@@ -142,7 +150,7 @@ class cluster():
 
     def assign_to_means(self,data):
         npoints = data.get_numpoints()
-        assignment = np.zeros(npoints,dtype=np.int8)
+        assignment = np.zeros(npoints,dtype=np.intc)
         
         for ipoint in range(npoints):
             pos = data.get_internal_element(ipoint)            

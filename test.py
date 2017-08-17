@@ -1,7 +1,7 @@
 import numpy as np
 import blarf
 
-natoms = 3
+natoms = 7
 
 k = 200
 
@@ -16,17 +16,17 @@ r[5] = 1.0
 r[7] = 1.1
 r[8] = 1.0
 #3
-#r[10] = 1.1
-#r[11] = 1.9
-#r[13] = 0.9
-#r[14] = 3.0
+r[10] = 1.1
+r[11] = 1.9
+r[13] = 0.9
+r[14] = 3.0
 # 5
-#r[15] = 0.3
-#r[16] = 0.9
-#r[17] = 4.0
+r[15] = 0.3
+r[16] = 0.9
+r[17] = 4.0
 # 6
-#r[19] = 1.1
-#r[20] = 4.8
+r[19] = 1.1
+r[20] = 4.8
 
 print "r ", r
 
@@ -77,8 +77,8 @@ print clust.get_mean_element(4)
 network = blarf.rbfn()
 
 network.set_width_factor(2.0)
-network.init_from_cluster_reciprical_bonds_traditionalrbf(clust)
-#network.init_from_cluster_reciprical_bonds_onedimensional(clust)
+#network.init_from_cluster_reciprical_bonds_traditionalrbf(clust)
+network.init_from_cluster_reciprical_bonds_onedimensional(clust)
 
 #cent = network.get_centers()[2]
 
