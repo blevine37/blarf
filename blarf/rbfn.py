@@ -31,7 +31,7 @@ class rbfn():
         return self.width_factor
 
     def set_znormalize(self,z):
-        self.znormalize = 
+        self.znormalize = z
 
     def get_znormalize(self):
         return self.znormalize
