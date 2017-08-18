@@ -122,6 +122,12 @@ class rbfn():
         data.set_energies_approx(np.matmul(self.G,self.weights))
         data.compute_residual()
         
+    def compute_energies_approx(self,data):
+        self.build_alpha()
+        self.build_G(data)        
+        data.set_energies_approx(np.matmul(self.G,self.weights))
+        data.compute_residual()
+        
     def h5_output(self,filename):
         h5f = h5py.File(filename, "w")
         members = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
