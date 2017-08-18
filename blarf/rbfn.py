@@ -12,6 +12,7 @@ class rbfn():
         self.centers = []
         self.numbf = 0
         self.width_factor = 2.0
+        self.znormalize = False
 
     def init_from_cluster(self,clust):
         self.numcenters = clust.get_k()
@@ -28,6 +29,12 @@ class rbfn():
 
     def get_width_factor(self):
         return self.width_factor
+
+    def set_znormalize(self,z):
+        self.znormalize = 
+
+    def get_znormalize(self):
+        return self.znormalize
 
     def add_center(self,cent):
         self.numcenters = self.get_numcenters()+1
@@ -103,9 +110,18 @@ class rbfn():
 #            for jbf in range(nbfcent):
 #                self.G[:,ibf] = Gcol
 #                ibf += 1
+
+        if (self.get_znormalize()):
+            self.normalize_G(npoints)
         print "G"
         print self.G
 
+    def normalize_G(self,npoints):
+        nbf = self.get_numbf()+1
+        for ibf in range(nbf):
+            norm = 1.0 / np.sum(self.G[:,ibf])
+            self.G[:,ibf] = self.G[:,ibf] * norm
+    
     def solve_weights(self,data):
         self.build_alpha()
         self.build_G(data)
@@ -124,7 +140,7 @@ class rbfn():
         
     def compute_energies_approx(self,data):
         self.build_alpha()
-        self.build_G(data)        
+        self.build_G(data)
         data.set_energies_approx(np.matmul(self.G,self.weights))
         data.compute_residual()
         
