@@ -13,6 +13,7 @@ class rbfn():
         self.numbf = 0
         self.width_factor = 2.0
         self.znormalize = False
+        self.regularization_constant = -1.0
 
     def init_from_cluster(self,clust):
         self.numcenters = clust.get_k()
@@ -35,6 +36,12 @@ class rbfn():
 
     def get_znormalize(self):
         return self.znormalize
+
+    def set_regularization_constant(self,r):
+        self.regularization_constant = r
+
+    def get_regularization_constant(self):
+        return self.regularization_constant
 
     def add_center(self,cent):
         self.numcenters = self.get_numcenters()+1
@@ -130,8 +137,14 @@ class rbfn():
         #print self.Ginv
         e_exact = data.get_energies_exact()
         #self.weights = np.matmul(self.Ginv,e_exact)
-        self.weights = (np.linalg.lstsq(self.G,e_exact))[0]
-        
+        if (self.regularization_constant < 0.0):
+            self.weights = (np.linalg.lstsq(self.G,e_exact))[0]
+        else:
+            GTG = np.matmul(self.G.T,self.G)
+            GTGmaI = GTG + self.regularization_constant * np.identity(self.get_numbf()+1)
+            GTe = np.matmul(self.G.T,e_exact)
+            self.weights = np.linalg.solve(GTGmaI,GTe)
+            
         print "weights"
         print self.weights
 

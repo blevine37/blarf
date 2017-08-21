@@ -4,11 +4,11 @@ import os
 
 natoms = 6
 
-k = 40
+k = 6
 
 ff = blarf.potential()
 
-timemax = 1000.0
+timemax = 10.0
 stride = 100
 timestep = 0.001
 
@@ -113,26 +113,27 @@ for w in width_factors:
         network = blarf.rbfn()
 
         network.set_width_factor(w)
+        network.set_regularization_constant(1.0)
         #network.init_from_cluster_reciprical_bonds_traditionalrbf(clust)
         network.init_from_cluster_reciprical_bonds_onedimensional(clust)
 
         network.solve_weights(thindata)
 
-        filename = "network." + str(w) + "." + str(itrial) + ".hdf5"
+        #filename = "network." + str(w) + "." + str(itrial) + ".hdf5"
         
-        network.h5_output(filename)
+        #network.h5_output(filename)
 
         murs[itrial] = thindata.get_mean_unsigned_residual()  
 
-        thindata.h5_output("thindata.hdf5")
+        #thindata.h5_output("thindata.hdf5")
 
         network.compute_energies_approx(thindata2)
         
         murs2[itrial] = thindata2.get_mean_unsigned_residual()  
         
-        thindata2.h5_output("thindata2.hdf5")
+        #thindata2.h5_output("thindata2.hdf5")
 
-    f = open('mur.dat', 'a')
+    f = open('mur2-eth.dat', 'a')
 
     s = str(w) + "  "
     for imur in range(murs.size):
@@ -143,7 +144,7 @@ for w in width_factors:
     
     f.close()
     
-    f = open('mur2.dat', 'a')
+    f = open('mur2x-eth.dat', 'a')
 
     s = str(w) + "  "
     for imur2 in range(murs2.size):
