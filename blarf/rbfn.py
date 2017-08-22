@@ -4,6 +4,7 @@ from blarf.dataset import dataset
 from blarf.cluster import cluster
 from blarf.rbfn_center import rbfn_center
 import h5py
+from scipy.optimize import brent
 
 class rbfn():
     def __init__(self):
@@ -150,6 +151,19 @@ class rbfn():
 
         data.set_energies_approx(np.matmul(self.G,self.weights))
         data.compute_residual()
+
+    def optimize_regularization_constant(self,logrc,fitdata,crossdata):
+        optlogrc = brent(self.solve_weights_return_mean_unsigned_residual, brack=(logrc-0.5,logrc+0.5),args=(fitdata,crossdata),tol=0.3,maxiter=50)
+        print "optlogrc", optlogrc
+        self.set_regularization_constant(10.0**optlogrc)
+        
+    def solve_weights_return_mean_unsigned_residual(self,logrc,fitdata,crossdata):
+        print "logrc ", logrc
+        rc = 10.0**logrc
+        self.set_regularization_constant(rc)
+        self.solve_weights(fitdata)
+        self.compute_energies_approx(crossdata)
+        return crossdata.get_mean_unsigned_residual()
         
     def compute_energies_approx(self,data):
         self.build_alpha()
